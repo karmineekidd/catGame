@@ -1,0 +1,107 @@
+<canvas id="gameCanvas" width="1650" height="900" style="border: 3px solid black;"></canvas>
+
+<script>
+	var grass = new Image();
+	grass.src = "grass.png";
+	var sky = new Image();
+	sky.src = "forest.jpg";
+	
+	var cat = new Image();
+	cat.src = "pixelCat.png";
+	
+	var little = new Image();
+	little.src = "littleGuy.png";
+	var big = new Image();
+	big.src = "bigGuy.png";
+	
+	var rock = new Image();
+	rock.src = "bigRock.png";
+	var bush = new Image();
+	bush.src = "bush.png";
+	
+	
+	var grassX = 0;	
+	var grassY = 700;
+	var grassWidth = 1650;
+	var grassHeight = 200;
+	
+	
+	var catX = 600;	
+	var catY = 590;
+	var catWidth = 256;
+	var catHeight = 192;
+	
+	var catVertSpeed = 0
+	
+	
+	var littleX = 64;	
+	var littleY = 610;
+	var littleWidth = 128;
+	var littleHeight = 128;
+	
+	var bigX = 300;	
+	var bigY = 520;
+	var bigWidth = 256;
+	var bigHeight = 256;
+	
+	
+	var rockX = 900;	
+	var rockY = 520;
+	var rockWidth = 256;
+	var rockHeight = 256;
+	
+	var bushX = 1200;	
+	var bushY = 520;
+	var bushWidth = 256;
+	var bushHeight = 256;
+	
+	var gravity = 1;
+	var isGameRunning = true;
+	var distance = 0;
+	
+	var skycolour = "#060d29";
+	
+	
+	window.onload = function() {
+		canvas = document.getElementById('gameCanvas');
+		canvasContext = canvas.getContext('2d');
+		canvasContext.imageSmoothingEnabled = false;
+		
+		setInterval(mainLoop, 1000 / 60); 
+	}
+	
+	function mainLoop(){
+		if (isGameRunning) {
+			draw();
+			update();
+		}
+	}
+	
+	
+	function draw(){
+		canvasContext.fillStyle = skycolour;
+		canvasContext.fillRect(0, 0, 1650, 800);
+		
+		canvasContext.drawImage(grass, grassX, grassY, grassWidth, grassHeight);
+		
+		canvasContext.drawImage(cat, catX, catY, catWidth, catHeight);
+	
+		//canvasContext.drawImage(little, littleX, littleY, littleWidth, littleHeight);
+		//canvasContext.drawImage(big, bigX, bigY, bigWidth, bigHeight);
+		
+		canvasContext.drawImage(rock, rockX, rockY, rockWidth, rockHeight);
+		canvasContext.drawImage(bush, bushX, bushY, bushWidth, bushHeight);
+		
+
+		
+		canvasContext.font = "30px Arial";
+		canvasContext.fillStyle = "white";
+		canvasContext.fillText("Distance covered: " + distance, 30, 50);
+	}
+	
+	
+	function update(){
+		distance += 1;
+	}
+	
+</script>
