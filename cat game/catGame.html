@@ -4,7 +4,7 @@
 	var grass = new Image();
 	grass.src = "grass.png";
 	var sky = new Image();
-	sky.src = "forest.jpg";
+	sky.src = "trees.png";
 	
 	var cat = new Image();
 	cat.src = "pixelCat.png";
@@ -21,13 +21,17 @@
 	
 	
 	var grassX = 0;	
-	var grassY = 700;
-	var grassWidth = 1650;
-	var grassHeight = 200;
+	var grassY = 630;
+	var grassWidth = 3300;
+	var grassHeight = 280;
 	
+	var skyX = 0;	
+	var skyY = 0;
+	var skyWidth = 1650;
+	var skyHeight = 900;
 	
-	var catX = 600;	
-	var catY = 590;
+	var catX = 50;	
+	var catY = 550;
 	var catWidth = 256;
 	var catHeight = 192;
 	
@@ -50,10 +54,10 @@
 	var rockWidth = 256;
 	var rockHeight = 256;
 	
-	var bushX = 1200;	
-	var bushY = 520;
-	var bushWidth = 256;
-	var bushHeight = 256;
+	var bushX = 600;	
+	var bushY = 620;
+	var bushWidth = 128;
+	var bushHeight = 128;
 	
 	var gravity = 1;
 	var isGameRunning = true;
@@ -82,6 +86,7 @@
 		canvasContext.fillStyle = skycolour;
 		canvasContext.fillRect(0, 0, 1650, 800);
 		
+		canvasContext.drawImage(sky, skyX, skyY, skyWidth, skyHeight);
 		canvasContext.drawImage(grass, grassX, grassY, grassWidth, grassHeight);
 		
 		canvasContext.drawImage(cat, catX, catY, catWidth, catHeight);
@@ -89,19 +94,106 @@
 		//canvasContext.drawImage(little, littleX, littleY, littleWidth, littleHeight);
 		//canvasContext.drawImage(big, bigX, bigY, bigWidth, bigHeight);
 		
-		canvasContext.drawImage(rock, rockX, rockY, rockWidth, rockHeight);
+		//canvasContext.drawImage(rock, rockX, rockY, rockWidth, rockHeight);
 		canvasContext.drawImage(bush, bushX, bushY, bushWidth, bushHeight);
 		
 
 		
-		canvasContext.font = "30px Arial";
-		canvasContext.fillStyle = "white";
+		canvasContext.font = "60px Arial";
+		canvasContext.fillStyle = "black";
 		canvasContext.fillText("Distance covered: " + distance, 30, 50);
 	}
 	
 	
 	function update(){
 		distance += 1;
+		
+		bushX -= 6;
+		if (bushX <- 5){
+			bushX = 1600;
+		}
+		
+		grassX -= 6;
+		if (grassX <- 0){
+			grassX = 1650;
+		}
+		
+		
+		
+		catVertSpeed += gravity;
+	
+		catY += catVertSpeed;
+		
+		if (catY > 550) {
+				catY = 550;
+				catVertSpeed = 0;
+		}
+
+		
+		if ( detectCollision(catX, catY, catWidth, catHeight, bushX, bushY, bushWidth, bushHeight) ){
+			isGameRunning = false;
+		}
 	}
+    
+	
+	window.addEventListener('keyup',this.check,false); 
+		function check(e) {
+			var code = e.keyCode;
+			if (code == 38) { 			
+				catVertSpeed = -25;
+			} else if (code == 32) { 	
+				catVertSpeed = -25;
+			} else if (code == 39) { 	
+				catX += 20;
+			} else if (code == 37) { 	
+				catX -= 20;
+			}
+		}
+		
+		window.addEventListener('keyup',this.restart,false); 
+		function restart(e) {
+			var code = e.keyCode;
+			if (code == 82) {
+				isGameRunning = true;
+				distance = 0;
+				catX = 50;
+				bushX = 1100;
+			}
+		}
+
+	
+	
+	
+	function detectCollision(ax, ay, aw, ah, bx, by, bw, bh){
+	// Takes details of two objects as parameters and returns true or false whether they collide
+	// IMPORTANT object A needs to be the smaller object  (unless they are the same size)
+	// @author K Kidd
+	// @lastModified 18/08/2023
+	// @param	ax	(int)	- The x coordinate of object A
+	// @param	ay	(int)	- The y coordinate of object A
+	// @param	aw	(int)	- The width of object A
+	// @param	ah	(int)	- The height of object A
+	// @param	bx	(int)	- The x coordinate of object B
+	// @param	by	(int)	- The y coordinate of object B
+	// @param	bw	(int)	- The width of object B
+	// @param	bh	(int)	- The height of object B
+	// @return     (boolean)- true if there is a collision, false if not
+		if (ax >= bx && ax <= bx+bw && ay >= by && ay <= by + by+bh) {
+			return true;
+		}
+		if (ax+aw >= bx && ax+aw  <= bx+bw && ay >= by && ay <= by + by+bh) {
+			return true;
+		}
+		if (ax >= bx && ax <= bx+bw && ay+ah >= by && ay <= by + by+bh) {
+			return true;
+		}
+		if (ax+aw  >= bx && ax+aw  <= bx+bw && ay+ah >= by && ay <= by + by+bh) {
+			return true;
+		}
+		console.log(bx + " " + ax + " " + (bx+bw));
+
+		return false
+	}
+	
 	
 </script>
