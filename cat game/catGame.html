@@ -1,10 +1,14 @@
 <canvas id="gameCanvas" width="1650" height="900" style="border: 3px solid black;"></canvas>
 
 <script>
-	var grass = new Image();
-	grass.src = "grass.png";
 	var sky = new Image();
-	sky.src = "trees.png";
+	sky.src = "sky.png";
+	var trees = new Image();
+	trees.src = "trees.png";
+	var firstGrass = new Image();
+	firstGrass.src = "firstGrass.png";
+	var secondGrass = new Image();
+	secondGrass.src = "secondGrass.png";
 	
 	var cat = new Image();
 	cat.src = "pixelCat.png";
@@ -20,20 +24,31 @@
 	bush.src = "bush.png";
 	
 	
-	var grassX = 0;	
-	var grassY = 630;
-	var grassWidth = 3300;
-	var grassHeight = 280;
-	
 	var skyX = 0;	
 	var skyY = 0;
 	var skyWidth = 1650;
 	var skyHeight = 900;
 	
+	var treesX = 0;	
+	var treesY = 0;
+	var treesWidth = 1650;
+	var treesHeight = 900;
+
+	var firstGrassX = 0;	
+	var firstGrassY = 630;
+	var firstGrassWidth = 3300;
+	var firstGrassHeight = 280;
+	
+	var secondGrassX = 3300;	
+	var secondGrassY = 630;
+	var secondGrassWidth = 3300;
+	var secondGrassHeight = 280;
+	
+	
 	var catX = 50;	
 	var catY = 550;
-	var catWidth = 256;
-	var catHeight = 192;
+	var catWidth = 280;
+	var catHeight = 180;
 	
 	var catVertSpeed = 0
 	
@@ -59,7 +74,7 @@
 	var bushWidth = 128;
 	var bushHeight = 128;
 	
-	var gravity = 1;
+	var gravity = 2;
 	var isGameRunning = true;
 	var distance = 0;
 	
@@ -83,11 +98,10 @@
 	
 	
 	function draw(){
-		canvasContext.fillStyle = skycolour;
-		canvasContext.fillRect(0, 0, 1650, 800);
-		
 		canvasContext.drawImage(sky, skyX, skyY, skyWidth, skyHeight);
-		canvasContext.drawImage(grass, grassX, grassY, grassWidth, grassHeight);
+		canvasContext.drawImage(trees, treesX, treesY, treesWidth, treesHeight);
+		canvasContext.drawImage(firstGrass, firstGrassX, firstGrassY, firstGrassWidth, firstGrassHeight);
+		canvasContext.drawImage(secondGrass, secondGrassX, secondGrassY, secondGrassWidth, secondGrassHeight);
 		
 		canvasContext.drawImage(cat, catX, catY, catWidth, catHeight);
 	
@@ -97,28 +111,39 @@
 		//canvasContext.drawImage(rock, rockX, rockY, rockWidth, rockHeight);
 		canvasContext.drawImage(bush, bushX, bushY, bushWidth, bushHeight);
 		
-
+		canvasContext.fillStyle = "rgba(255,255,255,0.5)";
+		canvasContext.fillRect(1400, 10, 160, 60);
+	
 		
 		canvasContext.font = "60px Arial";
 		canvasContext.fillStyle = "black";
-		canvasContext.fillText("Distance covered: " + distance, 30, 50);
+		canvasContext.fillText(distance, 1400, 60);
 	}
 	
 	
 	function update(){
 		distance += 1;
 		
+		firstGrassX -= 6;
+		secondGrassX -= 6;
+		
+		if (firstGrassX < -3300){
+			firstGrassX = 3300;
+		}
+		
+		if (secondGrassX < -3300){
+			secondGrassX = 3300;
+		}
+		
+		treesX -= 6;
+		if (treesX < -100){
+			treesX = 1650;
+		}
+		
 		bushX -= 6;
-		if (bushX <- 5){
+		if (bushX < -100){
 			bushX = 1600;
 		}
-		
-		grassX -= 6;
-		if (grassX <- 0){
-			grassX = 1650;
-		}
-		
-		
 		
 		catVertSpeed += gravity;
 	
