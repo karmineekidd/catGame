@@ -1,16 +1,109 @@
-<canvas id="gameCanvas" width="1650" height="900" style="border: 3px solid black;"></canvas>
+<html>
+	<head>
+		<title> Cat Game </title>
+		<link rel="icon" href="catIcon.png"/>
+		
+		<style>
+			@font-face {
+				 font-family: myHeadingFont;
+				 src: url(heading.ttf);
+			}
+			
+			@font-face {
+				 font-family: myTextFont;
+				 src: url(textthick.ttf);
+			}
+			
+			body {
+				margin: 10;
+			}
+			
+			#restartButton {
+				position:absolute;
+				top:300px;
+				left:600px; 
+				display:none; 
+				width:30%; 
+				height:20%; 
+				font-size:450%;
+				background-color:white; 
+				border:none; 
+				border-radius:15px;
+				font-family: myHeadingFont;
+			}
+			
+			#startScreen {
+				position:absolute;
+				top:100px;
+				left:450px; 
+				width:850px;
+				height:700px;
+				background-color:white; 
+				border-radius:15px;
+			}
+			
+			#startButton { 
+				width:30%; 
+				height:15%; 
+				font-size:300%;
+				background-color:green; 
+				color:white;
+				border:none; 
+				border-radius:15px;
+				margin-top:120px;
+				margin-left:300px;
+				font-family: myHeadingFont;
+			}
+			
+			#heading {
+				font-size:500%;
+				text-align:center;
+				margin-top:25px;
+				font-family: myHeadingFont;
+			}
+			
+			#instruct {
+				font-size:250%;
+				text-align:center;
+				font-family: myTextFont;
+			}
+		</style>
+		
+	</head>
+	
+	<body>
+		<canvas id="gameCanvas" width="1650" height="900" style="border: 3px solid black;"></canvas>
+		
+		<div id="restartScreen">
+			<h1 id="restartText"> Game over! </h1>
+			<button type="button" id="restartButton"> Restart </button>
+		</div>
+		
+		<div id="startScreen">
+			<h1 id="heading"> How to Play! </h1>
+			<p id="instruct"> Use the space bar or up arrow to jump <br>
+			Use the left key to go back <br>
+			Use the right key to go forward
+			</p>
+			
+			<button type="button" id="startButton"> Start! </button>
+		</div>
+		
+	</body>
+</html>
 
-<button type="button" id="restartButton" style="position:absolute; top:40%; left:35%; display:none; width:30%; height:20%; font-size:900%; background-color:white; border:none; border-radius: 15px;" > Restart </button>
 
 <script>
 	var sky = new Image();
 	sky.src = "sky.png";
 	var trees = new Image();
 	trees.src = "trees.png";
+	var trees2 = new Image();
+	trees2.src = "trees2.png";
 	var firstGrass = new Image();
-	firstGrass.src = "firstGrass.png";
+	firstGrass.src = "testgrass.png";
 	var secondGrass = new Image();
-	secondGrass.src = "secondGrass.png";
+	secondGrass.src = "testgrass2.png";
 	
 	var cat = new Image();
 	cat.src = "pixelCat.png";
@@ -35,6 +128,11 @@
 	var treesY = 0;
 	var treesWidth = 1650;
 	var treesHeight = 900;
+	
+	var trees2X = 1650;	
+	var trees2Y = 0;
+	var trees2Width = 1650;
+	var trees2Height = 900;
 
 	var firstGrassX = 0;	
 	var firstGrassY = 630;
@@ -102,6 +200,7 @@
 	function draw(){
 		canvasContext.drawImage(sky, skyX, skyY, skyWidth, skyHeight);
 		canvasContext.drawImage(trees, treesX, treesY, treesWidth, treesHeight);
+		canvasContext.drawImage(trees2, trees2X, trees2Y, trees2Width, trees2Height);
 		canvasContext.drawImage(firstGrass, firstGrassX, firstGrassY, firstGrassWidth, firstGrassHeight);
 		canvasContext.drawImage(secondGrass, secondGrassX, secondGrassY, secondGrassWidth, secondGrassHeight);
 		
@@ -129,23 +228,43 @@
 		firstGrassX -= 6;
 		secondGrassX -= 6;
 		
+		treesX -= 4;
+		trees2X -= 4;
+		
+		
 		if (firstGrassX < -3300){
-			firstGrassX = 3300;
+			firstGrassX = 3290;
 		}
 		
 		if (secondGrassX < -3300){
-			secondGrassX = 3300;
+			secondGrassX = 3290;
 		}
-		
-		treesX -= 6;
-		if (treesX < -100){
+	
+		if (treesX < -1650){
 			treesX = 1650;
 		}
+		
+		if (trees2X < -1650){
+			trees2X = 1650;
+		}
+		
 		
 		bushX -= 6;
 		if (bushX < -200){
 			bushX = 1600;
 		}
+		
+		catX -= 0.25;
+		if (catX < -200) {
+			isGameRunning = false;
+			document.getElementById("restartButton").style.display = "block";
+		}
+		
+		if (catX > 1450) {
+			isGameRunning = false;
+			document.getElementById("restartButton").style.display = "block";
+		}
+		
 		
 		catVertSpeed += gravity;
 	
@@ -165,13 +284,26 @@
 			isGameRunning = false; 
 			document.getElementById("restartButton").style.display = "block";
 		}
+		
 	}
     
 	document.getElementById("restartButton").addEventListener("click", restartGame);
 	function restartGame() {
 		isGameRunning = true;
 		time = 6000;
-		bushX = 1100;	
+		bushX = 1100;
+		catX = 0;
+		document.getElementById("restartButton").style.display = "none";
+	}
+	
+	document.getElementById("startButton").addEventListener("click", startGame);
+	function startGame() {
+		isGameRunning = true;
+		time = 6000;
+		bushX = 1100;
+		catX = 0;
+		document.getElementById("startButton").style.display = "none";
+		document.getElementById("startScreen").style.display = "none";
 		document.getElementById("restartButton").style.display = "none";
 	}
 	
@@ -181,8 +313,10 @@
 			var code = e.keyCode;
 			if (code == 38) { 			
 				catVertSpeed = -25;
+				catX += 20;
 			} else if (code == 32) { 	
 				catVertSpeed = -25;
+				catX += 20;
 			} else if (code == 39) { 	
 				catX += 20;
 			} else if (code == 37) { 	
@@ -195,9 +329,9 @@
 			var code = e.keyCode;
 			if (code == 82) {
 				isGameRunning = true;
-				distance = 0;
-				catX = 50;
+				time = 6000;
 				bushX = 1100;
+				catX = 0;				
 				document.getElementById("restartButton").style.display = "none";
 			}
 		}
@@ -205,11 +339,11 @@
 	
 	
 	
-	function detectCollision(ax, ay, aw, ah, bx, by, bw, bh){
+	function detectCollision(ax, ay, aw, ah, bx, by, bw, bh, offset){
 	// Takes details of two objects as parameters and returns true or false whether they collide
 	// IMPORTANT object A needs to be the smaller object  (unless they are the same size)
 	// @author K Kidd
-	// @lastModified 18/08/2023
+	// @lastModified 29/08/2023
 	// @param	ax	(int)	- The x coordinate of object A
 	// @param	ay	(int)	- The y coordinate of object A
 	// @param	aw	(int)	- The width of object A
@@ -231,7 +365,7 @@
 		if (ax+aw  >= bx && ax+aw  <= bx+bw && ay+ah >= by && ay <= by + by+bh) {
 			return true;
 		}
-		console.log(bx + " " + ax + " " + (bx+bw));
+		//console.log(bx + " " + ax + " " + (bx+bw));
 
 		return false
 	}
