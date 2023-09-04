@@ -18,18 +18,56 @@
 				margin: 10;
 			}
 			
-			#restartButton {
+			#info {
 				position:absolute;
-				top:300px;
-				left:600px; 
-				display:none; 
-				width:30%; 
-				height:20%; 
-				font-size:450%;
+				top:0;
+				left:20;
+			}
+			
+			#score {
+				font-family: myTextFont;
+				color:white;
+				margin-top:20;
+				font-size:250%;
+			}
+			
+			#time {
+				font-family: myTextFont;
+				color:white;
+				margin-left:1460;
+				margin-top:-72;
+				font-size:250%;
+			}
+		
+			
+			#restartScreen {
+				position:absolute;
+				top:200px;
+				left:630px;
+				display:none;
+			}
+			
+			#restartButton { 
+				width:65%; 
+				height:120%; 
+				font-size:350%;
 				background-color:white; 
 				border:none; 
 				border-radius:15px;
+				margin:0;
+				margin-left:25px;
+				margin-top: 50px;
 				font-family: myHeadingFont;
+			}
+			
+			#restartText {
+				text-align: center;
+				font-size:650%;
+				color:white;
+				font-family: myTextFont;
+				-webkit-text-stroke-width: 2px;
+				-webkit-text-stroke-color: black;
+
 			}
 			
 			#startScreen {
@@ -40,6 +78,7 @@
 				height:700px;
 				background-color:white; 
 				border-radius:15px;
+				
 			}
 			
 			#startButton { 
@@ -74,6 +113,11 @@
 	<body>
 		<canvas id="gameCanvas" width="1650" height="900" style="border: 3px solid black;"></canvas>
 		
+		<div id="info"> 
+			<h1 id="score"> Score: </h1>
+			<h1 id="time"> Time: </h1>
+		</div>
+		
 		<div id="restartScreen">
 			<h1 id="restartText"> Game over! </h1>
 			<button type="button" id="restartButton"> Restart </button>
@@ -81,8 +125,8 @@
 		
 		<div id="startScreen">
 			<h1 id="heading"> How to Play! </h1>
-			<p id="instruct"> Use the space bar or up arrow to jump <br>
-			Use the left key to go back <br>
+			<p id="instruct"> <br>Use the space bar or up arrow to jump <br><br>
+			Use the left key to go back <br><br>
 			Use the right key to go forward
 			</p>
 			
@@ -106,7 +150,7 @@
 	secondGrass.src = "testgrass2.png";
 	
 	var cat = new Image();
-	cat.src = "pixelCat.png";
+	cat.src = "walkFirst.png";
 	
 	var little = new Image();
 	little.src = "littleGuy.png";
@@ -114,7 +158,7 @@
 	big.src = "bigGuy.png";
 	
 	var rock = new Image();
-	rock.src = "bigRock.png";
+	rock.src = "rock.png";
 	var bush = new Image();
 	bush.src = "bush.png";
 	
@@ -176,7 +220,9 @@
 	
 	var gravity = 2;
 	var isGameRunning = true;
+	
 	var time = 6000;
+	var score = 0;
 	
 	var skycolour = "#060d29";
 	
@@ -209,28 +255,33 @@
 		//canvasContext.drawImage(little, littleX, littleY, littleWidth, littleHeight);
 		//canvasContext.drawImage(big, bigX, bigY, bigWidth, bigHeight);
 		
-		//canvasContext.drawImage(rock, rockX, rockY, rockWidth, rockHeight);
+		canvasContext.drawImage(rock, rockX, rockY, rockWidth, rockHeight);
 		canvasContext.drawImage(bush, bushX, bushY, bushWidth, bushHeight);
 		
-		canvasContext.fillStyle = "rgba(255,255,255,1)";
-		canvasContext.fillRect(1185 , 10, 400, 60);
-	
-		
-		canvasContext.font = "60px Arial";
-		canvasContext.fillStyle = "black";
-		canvasContext.fillText("Time Left: " + (Math.round(time/60)), 1200, 60);
+		//canvasContext.fillStyle = "rgba(255,255,255,1)";
+		//canvasContext.fillRect(1185 , 10, 400, 60);
+		//canvasContext.font = "60px Arial";
+		//canvasContext.fillStyle = "black";
+		//canvasContext.fillText("Time Left: " + (Math.round(time/60)), 1200, 60);
 	}
 	
 	
 	function update(){
 		time -= 1;
+		document.getElementById("time").innerHTML = "Time: " + (Math.round(time/60));
 		
-		firstGrassX -= 6;
-		secondGrassX -= 6;
+		score += 1;
+		document.getElementById("score").innerHTML = "Score: " + score;
+		
+		firstGrassX -= 8;
+		secondGrassX -= 8;
 		
 		treesX -= 4;
 		trees2X -= 4;
 		
+		bushX -= 8;
+		
+		catX -= 0.25;
 		
 		if (firstGrassX < -3300){
 			firstGrassX = 3290;
@@ -248,21 +299,21 @@
 			trees2X = 1650;
 		}
 		
-		
-		bushX -= 6;
 		if (bushX < -200){
 			bushX = 1600;
 		}
 		
-		catX -= 0.25;
+		
 		if (catX < -200) {
-			isGameRunning = false;
-			document.getElementById("restartButton").style.display = "block";
+			catX = -200;
 		}
 		
 		if (catX > 1450) {
-			isGameRunning = false;
-			document.getElementById("restartButton").style.display = "block";
+			catX = 1450;
+		}
+		
+		if (catY < 200) {
+			catY = 200;
 		}
 		
 		
@@ -274,15 +325,19 @@
 				catY = 550;
 				catVertSpeed = 0;
 		}
+		
+		if (catY == 550) {
+			cat.src = "walkFirst.png";
+		}
 
-		if (time == -1){
+		if (time == -70){
 			isGameRunning = false;
-			document.getElementById("restartButton").style.display = "block";
+			document.getElementById("restartScreen").html = "You win";
 		}
 		
-		if ( detectCollision(catX, catY, catWidth, catHeight, bushX, bushY, bushWidth, bushHeight) ){
+		if ( detectCollision(catX, catY, catWidth, catHeight, bushX, bushY, bushWidth, bushHeight, 80) ){
 			isGameRunning = false; 
-			document.getElementById("restartButton").style.display = "block";
+			document.getElementById("restartScreen").style.display = "block";
 		}
 		
 	}
@@ -291,32 +346,49 @@
 	function restartGame() {
 		isGameRunning = true;
 		time = 6000;
+		score = 0;
 		bushX = 1100;
 		catX = 0;
-		document.getElementById("restartButton").style.display = "none";
+		catY = 550;
+		cat.src = "walkFirst.png";
+		document.getElementById("restartScreen").style.display = "none";
 	}
 	
 	document.getElementById("startButton").addEventListener("click", startGame);
 	function startGame() {
 		isGameRunning = true;
 		time = 6000;
+		score = 0;
 		bushX = 1100;
 		catX = 0;
-		document.getElementById("startButton").style.display = "none";
+		catY = 550;
+		cat.src = "walkFirst.png";
 		document.getElementById("startScreen").style.display = "none";
-		document.getElementById("restartButton").style.display = "none";
+		document.getElementById("restartScreen").style.display = "none";
 	}
 	
 	
-	window.addEventListener('keyup',this.check,false); 
+	window.addEventListener('keydown',this.check,false); 
 		function check(e) {
 			var code = e.keyCode;
 			if (code == 38) { 			
-				catVertSpeed = -25;
-				catX += 20;
+				if (catY >= 550) {
+					catVertSpeed = -100;
+					catX += 50;
+					cat.src = "pixelCat.png"
+				} else if (catY < 300) {
+					catVertSpeed += 0;
+					catX += 0;
+				}
 			} else if (code == 32) { 	
-				catVertSpeed = -25;
-				catX += 20;
+				if (catY >= 550) {
+					catVertSpeed = -100;
+					catX += 50;
+					cat.src = "pixelCat.png"
+				} else if (catY < 300) {
+					catVertSpeed += 0;
+					catX += 0;
+				}
 			} else if (code == 39) { 	
 				catX += 20;
 			} else if (code == 37) { 	
@@ -330,9 +402,12 @@
 			if (code == 82) {
 				isGameRunning = true;
 				time = 6000;
+				score = 0;
 				bushX = 1100;
-				catX = 0;				
-				document.getElementById("restartButton").style.display = "none";
+				catX = 0;
+				catY = 550;	
+				cat.src = "walkFirst.png";
+				document.getElementById("restartScreen").style.display = "none";
 			}
 		}
 
@@ -353,16 +428,16 @@
 	// @param	bw	(int)	- The width of object B
 	// @param	bh	(int)	- The height of object B
 	// @return     (boolean)- true if there is a collision, false if not
-		if (ax >= bx && ax <= bx+bw && ay >= by && ay <= by + by+bh) {
+		if (ax+offset >= bx && ax+offset <= bx+bw && ay+offset >= by && ay+offset <= by + by+bh) {
 			return true;
 		}
-		if (ax+aw >= bx && ax+aw  <= bx+bw && ay >= by && ay <= by + by+bh) {
+		if (ax+aw-offset >= bx && ax+aw-offset  <= bx+bw && ay+offset >= by && ay+offset <= by + by+bh) {
 			return true;
 		}
-		if (ax >= bx && ax <= bx+bw && ay+ah >= by && ay <= by + by+bh) {
+		if (ax+offset >= bx && ax+offset <= bx+bw && ay+ah-offset >= by && ay+offset <= by + by+bh) {
 			return true;
 		}
-		if (ax+aw  >= bx && ax+aw  <= bx+bw && ay+ah >= by && ay <= by + by+bh) {
+		if (ax+aw-offset  >= bx && ax+aw-offset  <= bx+bw && ay+ah-offset >= by && ay+offset <= by + by+bh) {
 			return true;
 		}
 		//console.log(bx + " " + ax + " " + (bx+bw));
