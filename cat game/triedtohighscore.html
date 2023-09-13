@@ -250,10 +250,16 @@
 	
 	//var time = 2000;
 	var score = 0;
-	var highScore = 0;
 	
 	var skycolour = "#060d29";
 	
+	var rememberMode = localStorage.getItem('scoreMode');
+	if (rememberMode == null) {
+		localStorage.setItem('scoreMode', 0);
+	} else {
+		localStorage.getItem('scoreMode');
+	}
+		
 	window.onload = function() {
 		canvas = document.getElementById('gameCanvas');
 		canvasContext = canvas.getContext('2d');
@@ -320,75 +326,6 @@
 		
 		catX -= 0.25;
 		
-		
-		if (Math.round(score/5) > 300) {
-			score += 0.3;
-			firstGrassX -= 1;
-			secondGrassX -= 1;
-			treesX -= 1;
-			trees2X -= 1;
-			bushX -= 1;
-			rockX -= 1;
-			blockX -= 1;
-			coinX -= 1;
-			catX -= 0.15
-		} else if (Math.round(score/5) > 600) {
-			score += 0.3;
-			firstGrassX -= 2;
-			secondGrassX -= 2;
-			treesX -= 2;
-			trees2X -= 2;
-			bushX -= 2;
-			rockX -= 2;
-			blockX -= 2;
-			coinX -= 2;
-			catX -= 0.15
-		} else if (Math.round(score/5) > 900) {
-			score += 0.4;
-			firstGrassX -= 3;
-			secondGrassX -= 3;
-			treesX -= 3;
-			trees2X -= 3;
-			bushX -= 3;
-			rockX -= 3;
-			blockX -= 3;
-			coinX -= 3;
-			catX -= 0.25
-		} else if (Math.round(score/5) > 1200) {
-			score += 0.5;
-			firstGrassX -= 4;
-			secondGrassX -= 4;
-			treesX -= 4;
-			trees2X -= 4;
-			bushX -= 4;
-			rockX -= 4;
-			blockX -= 4;
-			coinX -= 4;
-			catX -= 0.35
-		} else if (Math.round(score/5) > 1500) {
-			score += 0.6;
-			firstGrassX -= 5;
-			secondGrassX -= 5;
-			treesX -= 5;
-			trees2X -= 5;
-			bushX -= 5;
-			rockX -= 5;
-			blockX -= 5;
-			coinX -= 5;
-			catX -= 0.35
-		} else if (Math.round(score/5) > 5000) {
-			score += 6;
-			firstGrassX -= 15;
-			secondGrassX -= 15;
-			treesX -= 15;
-			trees2X -= 15;
-			bushX -= 15;
-			rockX -= 15;
-			blockX -= 15;
-			coinX -= 15;
-			catX -= 0.35
-		}
-		
 		if (firstGrassX < -3300){
 			firstGrassX = 3290;
 		}
@@ -433,6 +370,7 @@
 			catY = 200;
 		}
 		
+		
 		catVertSpeed += gravity;
 	
 		catY += catVertSpeed;
@@ -461,13 +399,14 @@
 			isGameRunning = true;
 		}
 		
-		if ( detectCollision(catX, catY, catWidth, catHeight, rockX, rockY, rockWidth, rockHeight, 130) ){
+		if ( detectCollision(catX, catY, catWidth, catHeight, rockX, rockY, rockWidth, rockHeight, 80) ){
 			isGameRunning = false; 
 			document.getElementById("restartScreen").style.display = "block";
 			document.getElementById("scoreText").innerHTML = "Score: " + (Math.round(score/5));
-			if (Math.round(score/5) > highScore) {
-				highScore = (Math.round(score/5));
-				document.getElementById("highScoreText").innerHTML = "High Score: " + highScore;
+			console.log(rememberMode);
+			if (score > localStorage.getItem('scoreMode')) {
+				localStorage.setItem('scoreMode', (Math.round(score/5)) );
+				document.getElementById("highScoreText").innerHTML = "High Score: " + localStorage.getItem('scoreMode');
 			}
 		}
 		
