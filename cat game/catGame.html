@@ -15,7 +15,7 @@
 			}
 			
 			body {
-				margin: 10;
+				margin:10px;
 			}
 			
 			#info {
@@ -38,24 +38,40 @@
 				margin-top:-145;
 				font-size:500%;
 			}
-		
 			
-			#restartScreen {
+			
+			#restartScreen { 
 				position:absolute;
 				top:100px;
 				left:450px; 
 				width:850px;
 				height:700px;
-				display:none;
+				display: none;
+			} 
+			
+			#restartWords {
+				opacity: 1;
+				z-index: 200;
+				position:absolute;
+			}
+				
+			#restartBackground {
+				position:absolute;				
+				width:850px;
+				height:700px;
+				display:block;
 				background-color:white;
 				border-radius:15px;
+				opacity:0.7;
+				Z-index: 10;
 			}
 			
 			#restartButton { 
 				width:43%; 
-				height:15%; 
+				height:100%; 
+				padding:20px;
 				font-size:300%;
-				background-color:green; 
+				background-color:#184014; 
 				border:none; 
 				border-radius:15px;
 				margin-left:250px;
@@ -67,7 +83,7 @@
 				text-align: center;
 				font-size:500%;
 				color:black;
-				margin-left:10px;
+				margin-left:30px;
 				margin-top:35px;
 				font-family: myHeadingFont;
 			}
@@ -94,26 +110,44 @@
 				left:450px; 
 				width:850px;
 				height:700px;
-				background-color:white; 
-				border-radius:15px;	
+				display: block;
+			}
+			
+			#startWords {
+				opacity: 1;
+				z-index: 200;
+				position:absolute;
+			}
+			
+			#startBackground {
+				position:absolute;				
+				width:850px;
+				height:700px;
+				display:block;
+				background-color:white;
+				border-radius:15px;
+				opacity:0.7;
+				Z-index: 10;
 			}
 			
 			#startButton { 
-				width:30%; 
-				height:15%; 
+				width:43%; 
+				height:100%; 
+				padding:20px;
 				font-size:300%;
-				background-color:green; 
-				color:black;
+				background-color:#184014; 
 				border:none; 
 				border-radius:15px;
-				margin-left:300px;
+				margin-left:250px;
+				margin-top:-25px;
 				font-family: myHeadingFont;
 			}
 			
 			#heading {
 				font-size:500%;
 				text-align:center;
-				margin-top:25px;
+				margin-top:35px;
+				margin-left:30px;
 				margin-bottom:0;
 				font-family: myHeadingFont;
 			}
@@ -136,23 +170,29 @@
 		</div>
 		
 		<div id="restartScreen">
-			<h1 id="restartText"> Game over! :(</h1>
-			<h1 id="scoreText"> Score: 0  </h1>
-			<h1 id="highScoreText"> High Score: 0  </h1>
-			<button type="button" id="restartButton"> Restart </button>
+			<div id="restartBackground"> </div>
+			<div id="restartWords">
+				<h1 id="restartText"> Game over! :(</h1>
+				<h1 id="scoreText"> Score: 0  </h1>
+				<h1 id="highScoreText"> High Score: 0  </h1>
+				<button type="button" id="restartButton"> Restart </button>
+			</div>
 		</div>
 		
 		<div id="startScreen">
-			<h1 id="heading"> How to Play! </h1>
-			<p id="instruct"> <br>Use the space bar or up arrow to jump <br><br>
-			Use the left key to go back <br><br>
-			Use the right key to go forward <br><br>
-			Collect coins to increase the score<br><br>
-			Dodge bushes and rocks
-			</p>
-			
-			<button type="button" id="startButton"> Start! </button>
+			<div id="startBackground"> </div>
+			<div id="startWords">
+				<h1 id="heading"> How to Play! </h1>
+				<p id="instruct"> <br>Use the space bar or up arrow to jump <br><br>
+				Use the left key to go back <br><br>
+				Use the right key to go forward <br><br>
+				Collect coins to increase the score<br><br>
+				Dodge bushes and rocks
+				</p>	
+				<button type="button" id="startButton"> Start! </button>
+			</div>
 		</div>
+		<img src="image.png" id="startImage" style="margin:11px; top:0; left:0; width:98.5%; height:96.75%; position:absolute;">
 		
 	</body>
 </html>
@@ -246,7 +286,7 @@
 	var bushHeight = 240;
 	
 	var gravity = 2;
-	var isGameRunning = true;
+	var isGameRunning = false;
 	
 	//var time = 2000;
 	var score = 0;
@@ -445,6 +485,7 @@
 		if (catY == 550) {
 			cat.src = "walkFirst.png";
 		}
+		
 
 		//if (time == 0){
 			//isGameRunning = false;
@@ -504,6 +545,7 @@
 		catX = 0;
 		catY = 550;
 		cat.src = "walkFirst.png";
+		document.getElementById("startImage").style.display = "none";
 		document.getElementById("startScreen").style.display = "none";
 		document.getElementById("restartScreen").style.display = "none";
 	}

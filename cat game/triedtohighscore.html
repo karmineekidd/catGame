@@ -253,11 +253,11 @@
 	
 	var skycolour = "#060d29";
 	
-	var rememberMode = localStorage.getItem('scoreMode');
-	if (rememberMode == null) {
-		localStorage.setItem('scoreMode', 0);
+	var highscore = localStorage.getItem('highscore');
+	if (highscore == null) {
+		localStorage.setItem('highscore', 0);
 	} else {
-		localStorage.getItem('scoreMode');
+		localStorage.getItem('highscore');
 	}
 		
 	window.onload = function() {
@@ -403,10 +403,10 @@
 			isGameRunning = false; 
 			document.getElementById("restartScreen").style.display = "block";
 			document.getElementById("scoreText").innerHTML = "Score: " + (Math.round(score/5));
-			console.log(rememberMode);
-			if (score > localStorage.getItem('scoreMode')) {
-				localStorage.setItem('scoreMode', (Math.round(score/5)) );
-				document.getElementById("highScoreText").innerHTML = "High Score: " + localStorage.getItem('scoreMode');
+			console.log(highscore);
+			if ((Math.round(score/5)) > localStorage.getItem('highscore')) {
+				localStorage.setItem('highscore', (Math.round(score/5)) );
+				document.getElementById("highScoreText").innerHTML = "High Score: " + localStorage.getItem('highscore');
 			}
 		}
 		
