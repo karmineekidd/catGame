@@ -157,6 +157,20 @@
 				font-family: myHeadingFont;
 			}
 			
+			#resumeButton { 
+				width:43%; 
+				height:100%; 
+				padding:20px;
+				font-size:300%;
+				background-color:#184014; 
+				border:none; 
+				border-radius:15px;
+				margin-left:250px;
+				margin-top:-25px;
+				font-family: myHeadingFont;
+				display:none;
+			}
+			
 			#heading {
 				font-size:500%;
 				text-align:center;
@@ -206,6 +220,7 @@
 				Dodge bushes and rocks
 				</p>	
 				<button type="button" id="startButton"> Start! </button>
+				<button type="button" id="resumeButton"> Resume! </button>
 			</div>
 		</div>
 		<img src="image.png" id="startImage" style="margin:13px; top:0; left:0; width:1650px; height:900px; position:absolute;">
@@ -231,6 +246,8 @@
 	
 	var coin = new Image();
 	coin.src = "coin.png";
+	var purpleCoin = new Image();
+	purpleCoin.src = "purpleCoin.png";
 	var big = new Image();
 	big.src = "bigGuy.png";
 	
@@ -275,11 +292,15 @@
 	
 	var catVertSpeed = 0
 	
-	
 	var coinX = 1000;	
 	var coinY = 200;
 	var coinWidth = 96;
 	var coinHeight = 96;
+	
+	var purpleCoinX = 100;	
+	var purpleCoinY = 200;
+	var purpleCoinWidth = 72;
+	var purpleCoinHeight = 72;
 	
 	var bigX = 300;	
 	var bigY = 520;
@@ -304,11 +325,14 @@
 	var gravity = 2;
 	var isGameRunning = false;
 	
-	//var time = 2000;
-	var score = 0;
-	var highScore = 0;
+	var highscore = localStorage.getItem('highscore');
+	if (highscore == null) {
+		localStorage.setItem('highscore', 0);
+		highscore = 0;
+	}
 	
-	var skycolour = "#060d29";
+	var tick = 1;
+	var purpleTick = 0;
 	
 	window.onload = function() {
 		canvas = document.getElementById('gameCanvas');
@@ -336,29 +360,15 @@
 		canvasContext.drawImage(cat, catX, catY, catWidth, catHeight);
 	
 		canvasContext.drawImage(coin, coinX, coinY, coinWidth, coinHeight);
-		//canvasContext.drawImage(big, bigX, bigY, bigWidth, bigHeight);
-		
-	
-		//canvasContext.fillStyle = "rgba(94,144,124,1)";
-		//canvasContext.fillRect(1300, 550, 128, 10);
-		
-		//canvasContext.drawImage(block, blockX, blockY, blockWidth, blockHeight);
+		canvasContext.drawImage(purpleCoin, purpleCoinX, purpleCoinY, purpleCoinWidth, purpleCoinHeight);
+		canvasContext.drawImage(big, bigX, bigY, bigWidth, bigHeight);
 		
 		canvasContext.drawImage(rock, rockX, rockY, rockWidth, rockHeight);
 		canvasContext.drawImage(bush, bushX, bushY, bushWidth, bushHeight);
-		
-		//canvasContext.fillStyle = "rgba(255,255,255,1)";
-		//canvasContext.fillRect(1185 , 10, 400, 60);
-		//canvasContext.font = "60px Arial";
-		//canvasContext.fillStyle = "black";
-		//canvasContext.fillText("Time Left: " + (Math.round(time/60)), 1200, 60);
 	}
 	
 	
 	function update(){
-		//time -= 1;
-		//document.getElementById("time").innerHTML = "Time: " + (Math.round(time/60));
-		
 		score += 0.2;
 		document.getElementById("score").innerHTML = "Score: " + (Math.round(score/5));
 		
@@ -373,101 +383,28 @@
 		blockX -= 8;
 		
 		coinX -= 8;
+		purpleCoinX -= 8;
 		
 		catX -= 0.25;
 		
-		if (Math.round(score/5)%200 == 0) {
-			score += 0.3;
-			firstGrassX -= 0.1;
-			secondGrassX -= 0.1;
-			treesX -= 100;
-			trees2X -= 100;
-			bushX -= 0.1;
-			rockX -= 0.1;
-			blockX -= 0.1;
-			coinX -= 0.1;
-			catX -= 0.15
-		}
-		/*
-		if (Math.round(score/5) < 200) {
-			score += 0.3;
-			firstGrassX -= 0.1;
-			secondGrassX -= 0.1;
-			treesX -= 0.1;
-			trees2X -= 0.1;
-			bushX -= 0.1;
-			rockX -= 0.1;
-			blockX -= 0.1;
-			coinX -= 0.1;
-			catX -= 0.15
-		} else if (Math.round(score/5) < 400) {
-			score += 0.3;
-			firstGrassX -= 0.2;
-			secondGrassX -= 0.2;
-			treesX -= 0.2;
-			trees2X -= 0.2;
-			bushX -= 0.2;
-			rockX -= 0.2;
-			blockX -= 0.2;
-			coinX -= 0.2;
-			catX -= 0.15
-		} else if (Math.round(score/5) < 600) {
-			score += 0.4;
-			firstGrassX -= 0.3;
-			secondGrassX -= 0.3;
-			treesX -= 0.3;
-			trees2X -= 0.3;
-			bushX -= 0.3;
-			rockX -= 0.3;
-			blockX -= 0.3;
-			coinX -= 0.3;
-			catX -= 0.25
-		} else if (Math.round(score/5) < 800) {
-			score += 0.5;
-			firstGrassX -= 0.4;
-			secondGrassX -= 0.4;
-			treesX -= 0.4;
-			trees2X -= 0.4;
-			bushX -= 0.4;
-			rockX -= 0.4;
-			blockX -= 0.4;
-			coinX -= 0.4;
-			catX -= 0.35
-		} else if (Math.round(score/5) < 1000) {
-			score += 0.6;
-			firstGrassX -= 0.5;
-			secondGrassX -= 0.5;
-			treesX -= 0.5;
-			trees2X -= 0.5;
-			bushX -= 0.5;
-			rockX -= 0.5;
-			blockX -= 0.5;
-			coinX -= 0.5;
-			catX -= 0.35
-		} else if (Math.round(score/5) < 1200) {
-			score += 0.7;
-			firstGrassX -= 0.6;
-			secondGrassX -= 0.6;
-			treesX -= 0.6;
-			trees2X -= 0.6;
-			bushX -= 0.6;
-			rockX -= 0.6;
-			blockX -= 0.6;
-			coinX -= 0.6;
-			catX -= 0.35
-		} else if (Math.round(score/5) < 1400) {
-			score += 0.8;
-			firstGrassX -= 0.7;
-			secondGrassX -= 0.7;
-			treesX -= 0.7;
-			trees2X -= 0.7;
-			bushX -= 0.7;
-			rockX -= 0.7;
-			blockX -= 0.7;
-			coinX -= 0.7;
-			catX -= 0.35
-		}
-		*/
+		tick += 1;
+		speed = tick/200+2;
+		
+		score += speed/5;
+		firstGrassX -= speed/5;
+		secondGrassX -= speed/5;
+		treesX -= speed/5;
+		trees2X -= speed/5;
+		bushX -= speed/5;
+		rockX -= speed/5;
+		blockX -= speed/5;
+		coinX -= speed/5;
+		purpleCoinX -= speed/5;
+		catX -= speed/100;
+		
+		
+		
+		
 		if (firstGrassX < -3000){
 			firstGrassX = 3000;
 		}
@@ -498,6 +435,12 @@
 		
 		if (coinX < -200){
 			coinX = Math.floor(Math.random() * 1000)+1650;
+			coinY = Math.floor(Math.random() * 200)+150;
+		}
+		
+		if (purpleCoinX < -200){
+			purpleCoinX = Math.floor(Math.random() * 1000)+2950;
+			purpleCoinY = Math.floor(Math.random() * 400)+80;
 		}
 		
 		if (catX < -200) {
@@ -525,36 +468,38 @@
 			cat.src = "walkFirst.png";
 		}
 		
-
-		//if (time == 0){
-			//isGameRunning = false;
-			//document.getElementById("restartScreen").html = "You win";
-			//document.getElementById("restartText").innerHTML = score;
-		//}
-		
 		if ( detectCollision(catX, catY, catWidth, catHeight, bushX, bushY, bushWidth, bushHeight, 80) ){
 			score -= 15;
 		}
 		
-		if ( detectCollision(catX, catY, catWidth, catHeight, blockX, blockY, blockWidth, blockHeight, 80) ){
-			catY = 402;
-			isGameRunning = true;
-		}
-		
-		if ( detectCollision(catX, catY, catWidth, catHeight, rockX, rockY, rockWidth, rockHeight, 130) ){
+		if ( detectCollision(catX, catY, catWidth, catHeight, rockX, rockY, rockWidth, rockHeight, 80) ){
 			isGameRunning = false; 
 			document.getElementById("restartScreen").style.display = "block";
+			document.getElementById("pauseButton").style.display = "none";
+			document.getElementById("score").style.display = "none";
 			document.getElementById("scoreText").innerHTML = "Score: " + (Math.round(score/5));
-			if (Math.round(score/5) > highScore) {
-				highScore = (Math.round(score/5));
-				document.getElementById("highScoreText").innerHTML = "High Score: " + highScore;
+			console.log(highscore);
+			if ((Math.round(score/5)) > localStorage.getItem('highscore')) {
+				localStorage.setItem('highscore', (Math.round(score/5)) );
+				
 			}
+			document.getElementById("highScoreText").innerHTML = "High Score: " + localStorage.getItem('highscore');
 		}
-		
 		
 		if ( detectCollision(catX, catY, catWidth, catHeight, coinX, coinY, coinWidth, coinHeight, 80) ){
 			coinX = Math.floor(Math.random() * 1000)+1650;
 			score += 1000;
+		}
+		
+		if ( detectCollision(catX, catY, catWidth, catHeight, purpleCoinX, purpleCoinY, purpleCoinWidth, purpleCoinHeight, 80) ){
+			purpleCoinX = Math.floor(Math.random() * 1000)+1650;
+			score += 10000;
+			//purpleTick = tick;
+			//console.log(purpleTick);
+			//if (tick > purpleTick + 2){
+			//	console.log("red");
+			//	cat.src = "coin.png";
+			//}
 		}
 		
 	}
@@ -562,7 +507,15 @@
 	document.getElementById("pauseButton").addEventListener("click", pauseGame);
 	function pauseGame() {
 		document.getElementById("startScreen").style.display = "block"
+		document.getElementById("resumeButton").style.display = "block"
+		document.getElementById("startButton").style.display = "none";
+		
 		isGameRunning = false;
+		document.getElementById("resumeButton").addEventListener("click", resumeGame);
+		function resumeGame() {
+			document.getElementById("startScreen").style.display = "none";
+			isGameRunning = true;
+		}	
 	}
     
 	document.getElementById("restartButton").addEventListener("click", restartGame);
@@ -575,8 +528,11 @@
 		blockX = 1664;
 		catX = 0;
 		catY = 550;
+		tick = 0;
 		cat.src = "walkFirst.png";
 		document.getElementById("restartScreen").style.display = "none"
+		document.getElementById("pauseButton").style.display = "block";
+		document.getElementById("score").style.display = "block";
 	}
 	
 	document.getElementById("startButton").addEventListener("click", startGame);
@@ -589,10 +545,13 @@
 		blockX = 1664;
 		catX = 0;
 		catY = 550;
+		tick = 0;
 		cat.src = "walkFirst.png";
 		document.getElementById("startImage").style.display = "none";
 		document.getElementById("startScreen").style.display = "none";
 		document.getElementById("restartScreen").style.display = "none";
+		document.getElementById("pauseButton").style.display = "block";
+		document.getElementById("score").style.display = "block";
 	}
 	
 	
@@ -654,9 +613,12 @@
 				rockX = 1600;
 				blockX = 1664;
 				catX = 0;
-				catY = 550;	
+				catY = 550;
+				tick = 0;				
 				cat.src = "walkFirst.png";
 				document.getElementById("restartScreen").style.display = "none";
+				document.getElementById("pauseButton").style.display = "block";
+				document.getElementById("score").style.display = "block";
 			}
 		}
 

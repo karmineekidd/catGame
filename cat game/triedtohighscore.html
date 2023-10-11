@@ -256,10 +256,9 @@
 	var highscore = localStorage.getItem('highscore');
 	if (highscore == null) {
 		localStorage.setItem('highscore', 0);
-	} else {
-		localStorage.getItem('highscore');
+		highscore = 0;
 	}
-		
+	
 	window.onload = function() {
 		canvas = document.getElementById('gameCanvas');
 		canvasContext = canvas.getContext('2d');
@@ -406,8 +405,9 @@
 			console.log(highscore);
 			if ((Math.round(score/5)) > localStorage.getItem('highscore')) {
 				localStorage.setItem('highscore', (Math.round(score/5)) );
-				document.getElementById("highScoreText").innerHTML = "High Score: " + localStorage.getItem('highscore');
+				
 			}
+			document.getElementById("highScoreText").innerHTML = "High Score: " + localStorage.getItem('highscore');
 		}
 		
 		
