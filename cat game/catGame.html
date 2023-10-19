@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title> Cat Game </title>
-		<link rel="icon" href="catIcon.png"/>
+		<link rel="icon" href="catIcon.png">
 		
 		<style>
 			@font-face {
@@ -22,6 +22,7 @@
 				position:absolute;
 				top:0;
 				left:20;
+				z-index:302;
 			}
 			
 			#score {
@@ -43,6 +44,7 @@
 				border:none; 
 				border-radius:15px;
 				font-family: myHeadingFont;
+				z-index: 3000;
 			}
 			
 			#time {
@@ -61,6 +63,7 @@
 				width:850px;
 				height:700px;
 				display: none;
+				z-index: 205;
 			} 
 			
 			#restartWords {
@@ -125,6 +128,7 @@
 				width:850px;
 				height:700px;
 				display: block;
+				z-index:600000;
 			}
 			
 			#startWords {
@@ -223,13 +227,25 @@
 				<button type="button" id="resumeButton"> Resume! </button>
 			</div>
 		</div>
-		<img src="image.png" id="startImage" style="margin:13px; top:0; left:0; width:1650px; height:900px; position:absolute;">
+		<img src="image.png" id="startImage" style="margin:13px; top:0; left:0; width:1650px; height:900px; position:absolute;  z-index: 20000;">
+		
+		<img src="purpleGlow.png" id="glowImage" style="display:none; margin:13px; top:0; left:0; width:1650px; height:900px; position:absolute; opacity:1; z-index: 200; ">
+		<img src="redGlow.png" id="damageImage" style="display:none; margin:13px; top:0; left:0; width:1650px; height:900px; position:absolute; opacity:0.6; z-index: 201; ">
 		
 	</body>
 </html>
 
 
 <script>
+	var currentCat = 0;
+	const catPicsList = ["redImage.png", "orangeImage.png", "yellowImage.png","greenImage.png","turqImage.png","purpleImage.png","pinkImage.png"]
+	
+	setInterval(function() {
+			currentCat += 1;
+			currentCat = currentCat%7;
+			document.getElementById("startImage").src = catPicsList[currentCat]
+	}, 900);
+	
 	var sky = new Image();
 	sky.src = "sky.png";
 	var trees = new Image();
@@ -239,7 +255,7 @@
 	var firstGrass = new Image();
 	firstGrass.src = "testgrass.png";
 	var secondGrass = new Image();
-	secondGrass.src = "testgrass2.png";
+	secondGrass.src = "testgrass.png";
 	
 	var cat = new Image();
 	cat.src = "walkFirst.png";
@@ -248,11 +264,14 @@
 	coin.src = "coin.png";
 	var purpleCoin = new Image();
 	purpleCoin.src = "purpleCoin.png";
-	var big = new Image();
-	big.src = "bigGuy.png";
 	
-	var block = new Image();
-	block.src = "block.png";
+	var big = new Image();
+	big.src = "bigGuySide.png";
+	var little = new Image();
+	little.src = "littleGuySide.png";
+	var little2 = new Image();
+	little2.src = "littleGuySide.png";
+	
 	var rock = new Image();
 	rock.src = "rock.png";
 	var bush = new Image();
@@ -302,28 +321,35 @@
 	var purpleCoinWidth = 72;
 	var purpleCoinHeight = 72;
 	
-	var bigX = 300;	
+	var bigX = 17000000000000000;	
 	var bigY = 520;
-	var bigWidth = 256;
-	var bigHeight = 256;
+	var bigWidth = 128;
+	var bigHeight = 128;
 	
-	var blockX = 1364;
-	var blockY = 530;
-	var blockWidth = 128;
-	var blockHeight = 10;
+	var littleX = 1200000000;	
+	var littleY = 520;
+	var littleWidth = 96;
+	var littleHeight = 96;
+	
+	var little2X = 1200000000;	
+	var little2Y = 520;
+	var little2Width = 96;
+	var little2Height = 96;
 	
 	var rockX = 1300;	
 	var rockY = 480;
 	var rockWidth = 256;
 	var rockHeight = 256;
 	
-	var bushX = 600;	
+	var bushX = 2300;	
 	var bushY = 500;
 	var bushWidth = 240;
 	var bushHeight = 240;
 	
-	var gravity = 2;
+	var gravity = 4;
 	var isGameRunning = false;
+	var isInvincible = false;
+	var isDamage = false;
 	
 	var highscore = localStorage.getItem('highscore');
 	if (highscore == null) {
@@ -331,8 +357,8 @@
 		highscore = 0;
 	}
 	
-	var tick = 1;
-	var purpleTick = 0;
+	var tick = 100;
+	var purpleTick = 30000000000000;
 	
 	window.onload = function() {
 		canvas = document.getElementById('gameCanvas');
@@ -361,7 +387,9 @@
 	
 		canvasContext.drawImage(coin, coinX, coinY, coinWidth, coinHeight);
 		canvasContext.drawImage(purpleCoin, purpleCoinX, purpleCoinY, purpleCoinWidth, purpleCoinHeight);
-		canvasContext.drawImage(big, bigX, bigY, bigWidth, bigHeight);
+		//canvasContext.drawImage(big, bigX, bigY, bigWidth, bigHeight);
+		canvasContext.drawImage(little, littleX, littleY, littleWidth, littleHeight);
+		canvasContext.drawImage(little2, little2X, little2Y, little2Width, little2Height);
 		
 		canvasContext.drawImage(rock, rockX, rockY, rockWidth, rockHeight);
 		canvasContext.drawImage(bush, bushX, bushY, bushWidth, bushHeight);
@@ -369,48 +397,37 @@
 	
 	
 	function update(){
+		//if (tick = 120) {
+			//console.log("fojgoi eeeeee");
+			//bigX = 1600;
+			//bigY = 300;
+		//}
+		
 		score += 0.2;
 		document.getElementById("score").innerHTML = "Score: " + (Math.round(score/5));
 		
-		firstGrassX -= 8;
-		secondGrassX -= 8;
+		tick += 0.01;
+		speed = tick/100;
 		
-		treesX -= 4;
-		trees2X -= 4;
+		score += speed/2;
+		firstGrassX -= speed;
+		secondGrassX -= speed;
+		treesX -= speed/4;
+		trees2X -= speed/4;
+		bushX -= speed;
+		rockX -= speed;
+		bigX -= speed;
+		littleX -= speed;
+		little2X -= speed;
+		coinX -= speed;
+		purpleCoinX -= speed;
 		
-		bushX -= 8;
-		rockX -= 8;
-		blockX -= 8;
-		
-		coinX -= 8;
-		purpleCoinX -= 8;
-		
-		catX -= 0.25;
-		
-		tick += 1;
-		speed = tick/200+2;
-		
-		score += speed/5;
-		firstGrassX -= speed/5;
-		secondGrassX -= speed/5;
-		treesX -= speed/5;
-		trees2X -= speed/5;
-		bushX -= speed/5;
-		rockX -= speed/5;
-		blockX -= speed/5;
-		coinX -= speed/5;
-		purpleCoinX -= speed/5;
-		catX -= speed/100;
-		
-		
-		
-		
-		if (firstGrassX < -3000){
-			firstGrassX = 3000;
+		if (firstGrassX < -3300){
+			firstGrassX = 3300;
 		}
 		
-		if (secondGrassX < -3000){
-			secondGrassX = 3000;
+		if (secondGrassX < -3300){
+			secondGrassX = 3300;
 		}
 	
 		if (treesX < -1650){
@@ -422,15 +439,11 @@
 		}
 		
 		if (bushX < -200){
-			bushX = rockX + Math.floor(Math.random() * 300)+ 700;
+			bushX = rockX + Math.floor(Math.random() * 300)+ 2950;
 		}
 		
 		if (rockX < -200){
 			rockX = 1900;
-		}
-		
-		if (blockX < -200){
-			blockX = 1900;
 		}
 		
 		if (coinX < -200){
@@ -439,8 +452,23 @@
 		}
 		
 		if (purpleCoinX < -200){
-			purpleCoinX = Math.floor(Math.random() * 1000)+2950;
+			purpleCoinX = Math.floor(Math.random() * 2000)+9950;
 			purpleCoinY = Math.floor(Math.random() * 400)+80;
+		}
+		
+		if (bigX < -200){
+			bigX = Math.floor(Math.random() * 2000)+1950;
+			bigY = Math.floor(Math.random() * 200)+80;
+		}
+		
+		if (littleX < -200){
+			littleX = Math.floor(Math.random() * 2000)+400950;
+			littleY = Math.floor(Math.random() * 200)+80;
+		}
+		
+		if (little2X < -200){
+			little2X = Math.floor(Math.random() * 2000)+400950;
+			little2Y = Math.floor(Math.random() * 200)+80;
 		}
 		
 		if (catX < -200) {
@@ -468,17 +496,31 @@
 			cat.src = "walkFirst.png";
 		}
 		
-		if ( detectCollision(catX, catY, catWidth, catHeight, bushX, bushY, bushWidth, bushHeight, 80) ){
+		if (detectCollision(catX, catY, catWidth, catHeight, bushX, bushY, bushWidth, bushHeight, 80) && !isInvincible ){
 			score -= 15;
+			console.log("frog");
+			document.getElementById("damageImage").style.display = "block";
+			console.log("froggers");
+		} else {
+			document.getElementById("damageImage").style.display = "none";
 		}
 		
-		if ( detectCollision(catX, catY, catWidth, catHeight, rockX, rockY, rockWidth, rockHeight, 80) ){
+		
+		if (detectCollision(catX, catY, catWidth, catHeight, bigX, bigY, bigWidth, bigHeight, 80) && !isInvincible ){
+			littleX = bigX + Math.floor(Math.random() * 500) + 700;
+			littleY = Math.floor(Math.random() * 300)+ 300;
+			little2X = bigX + Math.floor(Math.random() * 600) + 900;	
+			little2Y = Math.floor(Math.random() * 200);
+		}
+		
+		if (detectCollision(catX, catY, catWidth, catHeight, littleX, littleY, littleWidth, littleHeight, 30) && !isInvincible ){
 			isGameRunning = false; 
 			document.getElementById("restartScreen").style.display = "block";
 			document.getElementById("pauseButton").style.display = "none";
 			document.getElementById("score").style.display = "none";
 			document.getElementById("scoreText").innerHTML = "Score: " + (Math.round(score/5));
 			console.log(highscore);
+			bigHit = 0;
 			if ((Math.round(score/5)) > localStorage.getItem('highscore')) {
 				localStorage.setItem('highscore', (Math.round(score/5)) );
 				
@@ -486,22 +528,60 @@
 			document.getElementById("highScoreText").innerHTML = "High Score: " + localStorage.getItem('highscore');
 		}
 		
-		if ( detectCollision(catX, catY, catWidth, catHeight, coinX, coinY, coinWidth, coinHeight, 80) ){
+		if (detectCollision(catX, catY, catWidth, catHeight, little2X, little2Y, little2Width, little2Height, 30) && !isInvincible ){
+			isGameRunning = false; 
+			document.getElementById("restartScreen").style.display = "block";
+			document.getElementById("pauseButton").style.display = "none";
+			document.getElementById("score").style.display = "none";
+			document.getElementById("scoreText").innerHTML = "Score: " + (Math.round(score/5));
+			console.log(highscore);
+			bigHit = 0;
+			if ((Math.round(score/5)) > localStorage.getItem('highscore')) {
+				localStorage.setItem('highscore', (Math.round(score/5)) );
+				
+			}
+			document.getElementById("highScoreText").innerHTML = "High Score: " + localStorage.getItem('highscore');
+		}
+		
+		if ( detectCollision(catX, catY, catWidth, catHeight, rockX, rockY, rockWidth, rockHeight, 80) && !isInvincible ){
+			isGameRunning = false; 
+			document.getElementById("restartScreen").style.display = "block";
+			document.getElementById("pauseButton").style.display = "none";
+			document.getElementById("score").style.display = "none";
+			document.getElementById("scoreText").innerHTML = "Score: " + (Math.round(score/5));
+			console.log(highscore);
+			bigHit = 0;
+			if ((Math.round(score/5)) > localStorage.getItem('highscore')) {
+				localStorage.setItem('highscore', (Math.round(score/5)) );
+				
+			}
+			document.getElementById("highScoreText").innerHTML = "High Score: " + localStorage.getItem('highscore');
+		} 
+		
+		if ( detectCollision(catX, catY, catWidth, catHeight, coinX, coinY, coinWidth, coinHeight) ){
 			coinX = Math.floor(Math.random() * 1000)+1650;
 			score += 1000;
 		}
 		
-		if ( detectCollision(catX, catY, catWidth, catHeight, purpleCoinX, purpleCoinY, purpleCoinWidth, purpleCoinHeight, 80) ){
-			purpleCoinX = Math.floor(Math.random() * 1000)+1650;
-			score += 10000;
-			//purpleTick = tick;
-			//console.log(purpleTick);
-			//if (tick > purpleTick + 2){
-			//	console.log("red");
-			//	cat.src = "coin.png";
-			//}
+		if ( detectCollision(catX, catY, catWidth, catHeight, purpleCoinX, purpleCoinY, purpleCoinWidth, purpleCoinHeight) ){
+			purpleCoinX = Math.floor(Math.random() * 2000)+9950;
+			score += 1000;
+			purpleTick = tick;
+			isInvincible = true;
+			document.getElementById("glowImage").style.display = "block";
 		}
 		
+		if (tick > purpleTick + 2.5){
+			document.getElementById("glowImage").src = "glow.png";
+		}
+		
+		if (tick > purpleTick + 3){
+			isInvincible = false;
+			console.log("red");
+			cat.src = "walkFirst.png";
+			document.getElementById("glowImage").src = "purpleGlow.png";
+			document.getElementById("glowImage").style.display = "none";
+		}
 	}
 	
 	document.getElementById("pauseButton").addEventListener("click", pauseGame);
@@ -521,85 +601,93 @@
 	document.getElementById("restartButton").addEventListener("click", restartGame);
 	function restartGame() {
 		isGameRunning = true;
-		time = 2000;
 		score = 0;
-		bushX = 1100;
+		bushX = 2800;
 		rockX = 1600;
 		blockX = 1664;
 		catX = 0;
 		catY = 550;
-		tick = 0;
+		tick = 1500;
+		bigX = Math.floor(Math.random() * 1000)+10000000650;
+		littleX = 10000000000000000000;
+		little2X = 10000000000000000000;
 		cat.src = "walkFirst.png";
 		document.getElementById("restartScreen").style.display = "none"
 		document.getElementById("pauseButton").style.display = "block";
 		document.getElementById("score").style.display = "block";
+		document.getElementById("glowImage").style.display = "none";
 	}
 	
 	document.getElementById("startButton").addEventListener("click", startGame);
 	function startGame() {
 		isGameRunning = true;
-		time = 2000;
 		score = 0;
-		bushX = 1100;
+		bushX = 2800;
 		rockX = 1600;
 		blockX = 1664;
 		catX = 0;
 		catY = 550;
-		tick = 0;
+		tick = 1500;
+		bigX = Math.floor(Math.random() * 1000)+1600000000000000000050;
+		littleX = 10000000000000000000;
+		little2X = 10000000000000000000;
 		cat.src = "walkFirst.png";
 		document.getElementById("startImage").style.display = "none";
 		document.getElementById("startScreen").style.display = "none";
 		document.getElementById("restartScreen").style.display = "none";
 		document.getElementById("pauseButton").style.display = "block";
 		document.getElementById("score").style.display = "block";
+		document.getElementById("glowImage").style.display = "none";
 	}
 	
 	
 	window.addEventListener('keydown',this.check,false); 
 		function check(e) {
 			var code = e.keyCode;
-			if (code == 38) { 			
+			if (code == 38 || code == 32 || code == 87) { 
+				if (isGameRunning == false) {
+					isGameRunning = true;
+					score = 0;
+					bushX = 2800;
+					rockX = 1600;
+					blockX = 1664;
+					catX = 0;
+					catY = 550;
+					tick = 1500;
+					bigX = Math.floor(Math.random() * 1000)+10000000650;
+					littleX = 10000000000000000000;
+					little2X = 10000000000000000000;
+					cat.src = "walkFirst.png";
+					document.getElementById("restartScreen").style.display = "none"
+					document.getElementById("pauseButton").style.display = "block";
+					document.getElementById("score").style.display = "block";
+					document.getElementById("glowImage").style.display = "none";
+				}	
 				if (catY >= 550) {
 					catVertSpeed = -100;
-					catX += 50;
-					cat.src = "pixelCat.png"
+					cat.src = "pixelCat.png";
 				} else if (catY < 300) {
 					catVertSpeed += 0;
 					catX += 0;
 				}
-			} 
-			else if (code == 32) { 	
-				if (catY >= 550) {
-					catVertSpeed = -100;
-					catX += 50;
-					cat.src = "pixelCat.png"
-				} else if (catY < 300) {
-					catVertSpeed += 0;
-					catX += 0;
-				}
-			} 
-			else if (code == 39) { 	
+			}  else if (code == 39 || code == 68) { 	
 				catX += 20;
+				score += speed;
+				firstGrassX -= speed;
+				secondGrassX -= speed;
+				treesX -= speed;
+				trees2X -= speed;
+				bushX -= speed;
+				rockX -= speed;
+				bigX -= speed;
+				littleX -= speed;
+				little2X -= speed;
+				coinX -= speed;
+				purpleCoinX -= speed;
 			} 
-			else if (code == 37) { 	
+			else if (code == 37 || code == 65) { 	
 				catX -= 20;
-			} 
-			else if (code == 87) { 			
-				if (catY >= 550) {
-					catVertSpeed = -100;
-					catX += 50;
-					cat.src = "pixelCat.png"
-				} else if (catY < 300) {
-					catVertSpeed += 0;
-					catX += 0;
-				}
-			}  
-			else if (code == 68) { 	
-				catX += 20;
 			}
-			else if (code == 65) { 	
-				catX -= 20;
-			} 
 		} 
 		
 		window.addEventListener('keyup',this.restart,false); 
@@ -607,25 +695,28 @@
 			var code = e.keyCode;
 			if (code == 82) {
 				isGameRunning = true;
-				time = 2000;
 				score = 0;
-				bushX = 1100;
+				bushX = 2800;
 				rockX = 1600;
 				blockX = 1664;
 				catX = 0;
 				catY = 550;
-				tick = 0;				
+				tick = 1500;
+				bigX = Math.floor(Math.random() * 1000)+16500000000000000000;
+				littleX = 10000000000000000000;
+				little2X = 10000000000000000000;				
 				cat.src = "walkFirst.png";
 				document.getElementById("restartScreen").style.display = "none";
 				document.getElementById("pauseButton").style.display = "block";
 				document.getElementById("score").style.display = "block";
+				document.getElementById("glowImage").style.display = "none";
 			}
 		}
 
 	
 	
 	
-	function detectCollision(ax, ay, aw, ah, bx, by, bw, bh, offset){
+	function detectCollision(ax, ay, aw, ah, bx, by, bw, bh, offset=0){
 	// Takes details of two objects as parameters and returns true or false whether they collide
 	// IMPORTANT object A needs to be the smaller object  (unless they are the same size)
 	// @author K Kidd
@@ -639,16 +730,16 @@
 	// @param	bw	(int)	- The width of object B
 	// @param	bh	(int)	- The height of object B
 	// @return     (boolean)- true if there is a collision, false if not
-		if (ax+offset >= bx && ax+offset <= bx+bw && ay+offset >= by && ay+offset <= by + by+bh) {
+		if (ax+offset >= bx && ax+offset <= bx+bw && ay+offset >= by && ay+offset <= by +bh) {
 			return true;
 		}
-		if (ax+aw-offset >= bx && ax+aw-offset  <= bx+bw && ay+offset >= by && ay+offset <= by + by+bh) {
+		if (ax+aw-offset >= bx && ax+aw-offset  <= bx+bw && ay+offset >= by && ay+offset <= by + bh) {
 			return true;
 		}
-		if (ax+offset >= bx && ax+offset <= bx+bw && ay+ah-offset >= by && ay+offset <= by + by+bh) {
+		if (ax+offset >= bx && ax+offset <= bx+bw && ay+ah-offset >= by && ay+offset <= by + bh) {
 			return true;
 		}
-		if (ax+aw-offset  >= bx && ax+aw-offset  <= bx+bw && ay+ah-offset >= by && ay+offset <= by + by+bh) {
+		if (ax+aw-offset  >= bx && ax+aw-offset  <= bx+bw && ay+ah-offset >= by && ay+offset <= by + bh) {
 			return true;
 		}
 		//console.log(bx + " " + ax + " " + (bx+bw));
